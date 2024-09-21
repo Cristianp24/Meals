@@ -1,6 +1,11 @@
 // models/meal.js
 module.exports = (sequelize, DataTypes) => {
     const Meal = sequelize.define('Meal', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -31,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
   
-    
+ 
   
     return Meal;
   };
