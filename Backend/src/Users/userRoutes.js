@@ -10,7 +10,7 @@ const router = Router();
 
 
 router.get("/", getAllUsers);
-router.get("/signin", signIn);
+router.post("/signin", signIn);
 router.post("/signup", signUp);
 router.post("/logout", logout);
 

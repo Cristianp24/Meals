@@ -63,7 +63,7 @@ async function signIn(req, res) {
     // Generar el token JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      'yourSecretKey', // Cambia esto por una clave secreta segura
+      'secret', // Cambia esto por una clave secreta segura
       { expiresIn: '1h' } // Duración del token (puedes cambiar el valor)
     );
 
