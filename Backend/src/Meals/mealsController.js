@@ -9,8 +9,12 @@ const createMeal = async (req, res) => {
       return res.status(400).json({ error: 'Invalid data provided' });
     }
 
-    // Si la autenticación es mediante JWT, los datos del usuario estarán en `req.user` por el middleware
-    const userId = req.user.id; // O req.user si viene de Passport
+    // Verificar si el usuario está autenticado
+    const userId = req.user ? req.user.id : null; // Obtén el ID del usuario
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' }); // Si no hay userId, responde con un error
+    }
     
     // Variables para sumar los valores nutricionales
     let totalProtein = 0;

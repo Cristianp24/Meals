@@ -39,41 +39,41 @@ async function signUp(req, res) {
   }
 }
 
-async function signIn(req, res) {
-  try {
-    const { email, password } = req.body;
+  async function signIn(req, res) {
+    try {
+      const { email, password } = req.body;
 
-    // Verificación de campos vacíos
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+      // Verificación de campos vacíos
+      if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required.' });
+      }
+
+      // Buscar al usuario por email
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid email or password.' });
+      }
+
+      // Comparar la contraseña proporcionada con la hasheada
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid email or password.' });
+      }
+
+      // Generar el token JWT
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        'secret', // Cambia esto por una clave secreta segura
+        { expiresIn: '1h' } // Duración del token (puedes cambiar el valor)
+      );
+
+      // Enviar la respuesta con el token
+      res.status(200).json({ message: 'Login successful!', token });
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ message: 'Error during login', error: error.message });
     }
-
-    // Buscar al usuario por email
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password.' });
-    }
-
-    // Comparar la contraseña proporcionada con la hasheada
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password.' });
-    }
-
-    // Generar el token JWT
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      'secret', // Cambia esto por una clave secreta segura
-      { expiresIn: '1h' } // Duración del token (puedes cambiar el valor)
-    );
-
-    // Enviar la respuesta con el token
-    res.status(200).json({ message: 'Login successful!', token });
-  } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ message: 'Error during login', error: error.message });
   }
-}
 
 
 async function getAllUsers(req, res) {

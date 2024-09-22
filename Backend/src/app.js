@@ -4,7 +4,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
-
+const passport = require('passport');
+const passportConfig = require('./Database/passportConfig.js');
 require('dotenv').config();
 
 
@@ -39,7 +40,11 @@ server.use(session({
     saveUninitialized: true,
 }));
 
+server.use(passport.initialize());
+server.use(passport.session());
 
+// Configuración de passport
+passportConfig(passport);
 
 server.use("/", router);
 

@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { signIn, signUp, logout, getAllUsers } = require('./usersController');
 const passport = require('passport');
-const passportStrategy = require('../Database/passport');
+const passportStrategy = require('../Database/passportConfig');
 
 
 const router = Router();
@@ -20,12 +20,12 @@ router.get('/auth/google',
 router.get('/auth/google/callback', 
  passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
-          // Successful authentication, redirect home.
-    res.redirect('/meals');
+          // Successful authentication, redirect.
+    res.redirect('http://localhost:5173/create-meal');
  });
 router.get("/auth/logout", (req, res) => {
    req.logout(() => {
-     res.redirect("/brands");
+     res.redirect("/home");
      });
   });
 
