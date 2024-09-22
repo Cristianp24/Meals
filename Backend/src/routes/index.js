@@ -1,14 +1,10 @@
 const { Router } = require("express");
-
+const userRoutes = require("../Users/userRoutes");
 
 const router = Router();
 
 
-router.get("/users", (req, res) => {
-    res.status(200).send({
-        message: "Hello, I'm the users endpoint!",
-    });
-});
+router.use("/users", userRoutes);
 
 router.get("/foods", (req, res) => {
     res.status(200).send({
