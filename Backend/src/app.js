@@ -3,6 +3,7 @@ const router = require("./routes/index.js");
 const morgan = require('morgan');
 const cors = require('cors');
 const session = require('express-session');
+const cookieParser = require("cookie-parser");
 
 require('dotenv').config();
 
@@ -17,6 +18,7 @@ const myOwnMiddleware = (req, res, next) => {
     next();
 };
 
+server.use(cookieParser());
 
 
 server.use(cors({
@@ -37,14 +39,6 @@ server.use(session({
     saveUninitialized: true,
 }));
 
-// Inicialización de passport y sesión de usuario
-// server.use(passport.initialize());
-// server.use(passport.session());
-
-// // Configuración de passport
-// passportConfig(passport);
-
-// Configuración de passport
 
 
 server.use("/", router);
