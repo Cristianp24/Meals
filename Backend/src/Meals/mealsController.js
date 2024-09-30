@@ -1,6 +1,7 @@
 const { Meal, Food } = require('../Database/dbConfig');   
 
 const createMeal = async (req, res) => {
+  
   try {
     const { name, foodItems } = req.body;
 
@@ -10,7 +11,7 @@ const createMeal = async (req, res) => {
     }
 
     // Verificar si el usuario está autenticado
-    const userId = req.user ? req.user.id : null; // Obtén el ID del usuario
+    const userId = req.user ? (req.user.googleId || req.user.id) : null; // Obtén el ID del usuario
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' }); // Si no hay userId, responde con un error
@@ -49,7 +50,7 @@ const createMeal = async (req, res) => {
       totalFat,
       totalFiber,
       totalCalories,
-      userId, // Asociar la comida al usuario autenticado
+      userId  , // Asociar la comida al usuario autenticado
     });
 
     return res.status(201).json(meal);
@@ -58,9 +59,6 @@ const createMeal = async (req, res) => {
     return res.status(500).json({ error: 'Error creating meal' });
   }
 };
-
-module.exports = { createMeal };
-
 
   const getAllMeals = async (req, res) => {
     try {

@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       totalCalories: {
         type: DataTypes.FLOAT,
         allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       }
     });
   

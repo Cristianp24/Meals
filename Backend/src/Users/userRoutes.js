@@ -16,13 +16,14 @@ router.post("/logout", logout);
 
 
 router.get('/auth/google',
- passport.authenticate('google', { scope: ['profile'] }));
+ passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', 
  passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
           // Successful authentication, redirect.
     res.redirect('http://localhost:5173/create-meal');
  });
+
 router.get("/auth/logout", (req, res) => {
    req.logout(() => {
      res.redirect("/home");

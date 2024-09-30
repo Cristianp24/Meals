@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   return sequelize.define('User', {
+   
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -16,7 +17,11 @@ module.exports = (sequelize) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 };

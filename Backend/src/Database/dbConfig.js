@@ -13,13 +13,15 @@ const sequelize = new Sequelize('meals', 'postgres', 'olvidatela', {
 
 // Inicializar los modelos
 const Food = FoodModel(sequelize, Sequelize.DataTypes);
-const User = UserModel(sequelize);
+const User = UserModel(sequelize, Sequelize.DataTypes);
 const Meal = MealModel(sequelize, Sequelize.DataTypes);
 const MealFood = MealFoodModel(sequelize, Sequelize.DataTypes);
 
 // // Definir relaciones
-User.hasMany(Meal, { foreignKey: 'userId', as: 'meals' });
-Meal.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+User.hasMany(Meal, { foreignKey: 'userId' });
+Meal.belongsTo(User, { foreignKey: 'userId' });
+
+
 Meal.belongsToMany(Food, { through: MealFood, as: 'foods' });
 Food.belongsToMany(Meal, { through: MealFood, as: 'meals' });
 
