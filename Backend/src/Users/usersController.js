@@ -1,4 +1,4 @@
-const   { User } = require('../Database/dbConfig'); // Importa el modelo User
+const   { User } = require('../Other/dbConfig'); // Importa el modelo User
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { verify } = require("jsonwebtoken");
@@ -91,7 +91,7 @@ async function getAllUsers(req, res) {
 }
 
 const logout = (req, res) => {
-  const { userToken } = req.cookies;
+  const userToken = req.headers.authorization.split('Bearer ')[1];
   console.log("Este beria ser el token" + userToken);
   if (!userToken) {
     return res.status(401).json({ error: "no token" });

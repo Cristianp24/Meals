@@ -1,4 +1,4 @@
-const { Food } = require('../Database/dbConfig');
+const { Food } = require('../Other/dbConfig');
 
 const createFood = async (req, res) => {
     try {

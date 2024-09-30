@@ -2,7 +2,12 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   return sequelize.define('User', {
-   
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -18,10 +23,6 @@ module.exports = (sequelize) => {
     password: {
       type: DataTypes.STRING,
       allowNull: true,
-    },
-    googleId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    }
   });
 };

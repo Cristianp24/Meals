@@ -1,4 +1,4 @@
-const { Meal, Food } = require('../Database/dbConfig');   
+const { Meal, Food } = require('../Other/dbConfig');   
 
 const createMeal = async (req, res) => {
   
@@ -50,7 +50,7 @@ const createMeal = async (req, res) => {
       totalFat,
       totalFiber,
       totalCalories,
-      userId  , // Asociar la comida al usuario autenticado
+      userId: userId  , // Asociar la comida al usuario autenticado
     });
 
     return res.status(201).json(meal);

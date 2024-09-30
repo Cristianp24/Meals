@@ -4,12 +4,10 @@ const morgan = require('morgan');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
-const passport = require('passport');
-const passportConfig = require('./Database/passportConfig.js');
 require('dotenv').config();
 
 
-require("./Database/dbConfig.js");
+require("./Other/dbConfig.js");
 
 const server = express();
 
@@ -23,8 +21,9 @@ server.use(cookieParser());
 
 
 server.use(cors({
-  origin: '*', // Asegúrate de que coincida con tu URL de frontend
+  origin: 'http://localhost:5173', // Asegúrate de que coincida con tu URL de frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -40,11 +39,11 @@ server.use(session({
     saveUninitialized: true,
 }));
 
-server.use(passport.initialize());
-server.use(passport.session());
+// server.use(passport.initialize());
+// server.use(passport.session());
 
-// Configuración de passport
-passportConfig(passport);
+// // Configuración de passport
+// passportConfig(passport);
 
 server.use("/", router);
 
