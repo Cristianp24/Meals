@@ -12,6 +12,7 @@ const createMeal = async (req, res) => {
 
     // Verificar si el usuario está autenticado
     const userId = req.user ? (req.user.googleId || req.user.id) : null; // Obtén el ID del usuario
+   
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' }); // Si no hay userId, responde con un error
@@ -97,6 +98,23 @@ const createMeal = async (req, res) => {
     }
   }
   
+  const getUserMeals = async (req, res) => {
   
-  module.exports = { createMeal, getAllMeals, getMealById };
+    try {
+      const userId = req.params.id; // Asegúrate de que este ID es correcto
+      console.log("Fetching meals for user ID:", userId); // Verifica que el ID es el correcto
+      const meals = await Meal.findAll({ where: { userId: userId } });
+  
+      if (!meals.length) {
+        return res.status(404).json({ message: 'No meals found for this user' });
+      }
+  
+      res.json(meals);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al obtener comidas' });
+    }
+  };
+  
+  module.exports = { createMeal, getAllMeals, getMealById, getUserMeals };
   

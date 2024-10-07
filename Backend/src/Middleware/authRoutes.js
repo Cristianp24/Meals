@@ -1,26 +1,22 @@
 const jwt = require('jsonwebtoken');
 
-// Middleware combinado para autenticación JWT o Passport
 const combinedAuth = (req, res, next) => {
   const token = req.headers['authorization'];
 
-  // Verificación de JWT
-  if (token) {
-    try {
-      const decoded = jwt.verify(token.split(' ')[1], 'secret');
-      req.user = decoded; // Almacenar los datos del usuario
-      return next(); // Pasar al siguiente middleware o controlador
-    } catch (error) {
-      return res.status(401).json({ message: 'Invalid token.' });
+  if (!token) {
+    return res.status(403).json({ error: 'No token provided' });
+  }
+
+  // Extraer el token después de 'Bearer'
+  const tokenWithoutBearer = token.split(' ')[1];
+
+  jwt.verify(tokenWithoutBearer, 'secret', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
-  }
-
-  // Verificación con Passport
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next(); // Si hay sesión Passport
-  }
-
-  return res.status(401).json({ message: 'Unauthorized access.' });
+    req.user = decoded; // Aquí guardamos el `userId` que está en el token
+    next();
+  });
 };
 
 module.exports = combinedAuth;

@@ -33,10 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
+        
       }
     });
   
- 
   
     return Meal;
   };

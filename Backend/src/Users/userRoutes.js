@@ -16,6 +16,7 @@ router.post("/signup", signUp);
 router.post("/logout", logout);
 
 
+
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
   }));
@@ -33,5 +34,7 @@ router.get('/auth/google', passport.authenticate('google', {
       res.redirect(`http://localhost:5173/create-meal#${token}`);
     }
   );
+
+  
 
 module.exports = router;
