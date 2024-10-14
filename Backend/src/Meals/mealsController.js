@@ -11,7 +11,7 @@ const createMeal = async (req, res) => {
     }
 
     // Verificar si el usuario está autenticado
-    const userId = req.user ? (req.user.googleId || req.user.id) : null; // Obtén el ID del usuario
+    const userId = req.user.id; // Obtén el ID del usuario
    
 
     if (!userId) {
@@ -101,8 +101,9 @@ const createMeal = async (req, res) => {
   const getUserMeals = async (req, res) => {
   
     try {
-      const userId = req.params.id; // Asegúrate de que este ID es correcto
-      console.log("Fetching meals for user ID:", userId); // Verifica que el ID es el correcto
+      const userId = req.params.id;  // Asegúrate de que este ID es correcto
+     
+       // Verifica que el ID es el correcto
       const meals = await Meal.findAll({ where: { userId: userId } });
   
       if (!meals.length) {

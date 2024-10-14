@@ -17,6 +17,7 @@ async (accessToken, refreshToken, profile, done) => {
   try {
     // Buscar al usuario por su ID de Google
     let user = await User.findOne({ where: { email: profile.emails[0].value } });
+    
     if (!user) {
       // Si no existe, crea uno nuevo
       user = await User.create({
@@ -24,6 +25,8 @@ async (accessToken, refreshToken, profile, done) => {
         email: profile.emails[0].value,
         password: null // No se usa contraseña en este caso
       });
+      
+      
     }
     return done(null, user);
   } catch (error) {
