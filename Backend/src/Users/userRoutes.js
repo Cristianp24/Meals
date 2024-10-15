@@ -24,13 +24,13 @@ router.get('/auth/google', passport.authenticate('google', {
   router.get('/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
+      const userId = req.user.id || req.user.sub; // Usar id o sub
       const token = jwt.sign(
-        { id: req.user.id, email: req.user.email },
+        { id: userId, email: req.user.email },
         'secret', 
         { expiresIn: '1h' } 
       );
-      
-      // Almacena el token en localStorage
+  
       res.redirect(`http://localhost:5173/create-meal#${token}`);
     }
   );

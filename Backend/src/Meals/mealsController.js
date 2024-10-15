@@ -101,7 +101,7 @@ const createMeal = async (req, res) => {
   const getUserMeals = async (req, res) => {
   
     try {
-      const userId = req.params.id;  // Asegúrate de que este ID es correcto
+      const userId = req.params.userId;  // Asegúrate de que este ID es correcto
      
        // Verifica que el ID es el correcto
       const meals = await Meal.findAll({ where: { userId: userId } });

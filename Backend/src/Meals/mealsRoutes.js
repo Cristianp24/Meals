@@ -9,7 +9,7 @@ const router = Router();
 router.get("/", getAllMeals);
 router.post("/",combinedAuth, createMeal);
 router.get("/:id",getMealById);
-router.get('/users/:id', getUserMeals);
+router.get('/users/:userId', getUserMeals);
 
 
 module.exports = router
