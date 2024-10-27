@@ -116,6 +116,21 @@ const createMeal = async (req, res) => {
       res.status(500).json({ message: 'Error al obtener comidas' });
     }
   };
+
+  const deleteMeal = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const meal = await Meal.findByPk(id);
+      if (!meal) {
+        return res.status(404).json({ message: 'Meal not found' });
+      }
+      await meal.destroy();
+      res.json({ message: 'Meal deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error deleting meal' });
+    }
+  };
   
-  module.exports = { createMeal, getAllMeals, getMealById, getUserMeals };
+  module.exports = { createMeal, getAllMeals, getMealById, getUserMeals, deleteMeal };
   
