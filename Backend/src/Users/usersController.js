@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { verify } = require("jsonwebtoken");
 const { serialize } = require("cookie");
+const nodemailer = require('nodemailer');
 
 
 async function signUp(req, res) {
@@ -112,4 +113,88 @@ const logout = (req, res) => {
   }
 };
 
-module.exports = { signIn, signUp, logout,  getAllUsers };
+const sendRecoveryEmail = async (email, resetUrl) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Password Recovery',
+    html: `<p>Click <a href="${resetUrl}" target="_blank">here</a> to reset your password. This link expires in 1 hour.</p>`
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  // Lógica para verificar si el usuario está registrado
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    return res.status(404).send('User not found');
+  }
+
+  // Generar un token de restablecimiento de contraseña
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  // Construir la URL de restablecimiento
+  const resetUrl = `http://localhost:5173/reset-password/${token}`;
+
+  try {
+    // Llama a la función para enviar el correo con el resetUrl
+    await sendRecoveryEmail(email, resetUrl);
+    return res.status(200).send('Recovery email sent');
+  } catch (error) {
+    return res.status(500).send('Password reset error: ' + error.message);
+  }
+};
+
+
+const resetPassword = async (req, res) => {
+  try {
+    // Obtener y verificar el token desde la cabecera de autorización
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token not provided' });
+    }
+
+    // Decodificar el token para obtener el ID de usuario
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    // Verificar que el usuario existe en la base de datos
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Obtener la nueva contraseña del cuerpo de la solicitud
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+    }
+
+    // Hashear la nueva contraseña y actualizarla en la base de datos
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedPassword });
+
+    // Responder con un mensaje de éxito
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error('Password reset error:', error);
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    res.status(500).json({ message: 'Error resetting password' });
+  }
+};
+
+module.exports = { signIn, signUp, logout,  getAllUsers, requestPasswordReset, resetPassword };

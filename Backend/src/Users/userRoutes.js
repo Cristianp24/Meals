@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { signIn, signUp, logout, getAllUsers } = require('./usersController');
+const { signIn, signUp, logout, getAllUsers, requestPasswordReset, resetPassword } = require('./usersController');
 const passport = require('passport');
 require('../Other/passportConfig');
 const jwt = require('jsonwebtoken');
@@ -34,6 +34,13 @@ router.get('/auth/google', passport.authenticate('google', {
       res.redirect(`http://localhost:5173/create-meal#${token}`);
     }
   );
+
+
+router.post('/request-password-reset', requestPasswordReset);
+
+// Ruta para restablecer la contraseña con el token de recuperación
+router.post('/reset-password/:token', resetPassword);
+  
 
   
 
