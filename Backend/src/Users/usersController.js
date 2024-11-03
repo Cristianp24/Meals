@@ -154,6 +154,9 @@ const changeRole = async (req, res) => {
 
 
 
+
+
+
 const logout = (req, res) => {
   const userToken = req.headers.authorization.split('Bearer ')[1];
   console.log("Este beria ser el token" + userToken);

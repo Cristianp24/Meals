@@ -4,6 +4,8 @@ const passport = require('passport');
 require('../Other/passportConfig');
 const jwt = require('jsonwebtoken');
 
+const { User } = require('../Other/dbConfig');
+
 
 const router = Router();
 
@@ -16,6 +18,27 @@ router.post("/signup", signUp);
 router.post("/logout", logout);
 router.put("/:id/suspend", suspendUser);
 router.put('/change-role', changeRole);
+
+router.put('/status', async (req, res) => {
+  const { userId, status } = req.body;
+
+  try {
+    // Verifica si el usuario existe
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Actualiza el estado del usuario
+    user.status = status;
+    await user.save();
+
+    res.status(200).send({ message: 'User status updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
 
