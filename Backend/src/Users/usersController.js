@@ -91,6 +91,69 @@ async function getAllUsers(req, res) {
   }
 }
 
+async function suspendUser(req, res) {
+  try {
+    const userId = req.params.id;
+
+    // Verificar si el usuario existe
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Cambiar el estado del usuario
+    if (user.status === "suspended") {
+      // Si el usuario está suspendido, lo activamos
+      user.status = "active";
+    } else {
+      // Si el usuario no está suspendido, lo suspendemos
+      user.status = "suspended";
+    }
+
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling user status" });
+  }
+}
+
+const changeRole = async (req, res) => {
+  const { userId, newRole } = req.body;
+
+  try {
+    // Verificar si los datos requeridos están presentes
+    if (!userId || !newRole) {
+      return res.status(400).json({ message: "userId y newRole son requeridos." });
+    }
+
+    // Validar que el rol sea uno de los permitidos (por ejemplo, 'user' o 'admin')
+    const validRoles = ['user', 'admin'];
+    if (!validRoles.includes(newRole)) {
+      return res.status(400).json({ message: "Rol no válido." });
+    }
+
+    // Buscar el usuario en la base de datos y actualizar su rol
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    user.role = newRole;
+    await user.save();
+
+    // Responder con éxito
+    res.status(200).json({ message: "Rol de usuario actualizado con éxito." });
+  } catch (error) {
+    console.error("Error al cambiar el rol del usuario:", error.message);
+    res.status(500).json({ message: "Error al cambiar el rol del usuario." });
+  }
+};
+
+
+
+
+
 const logout = (req, res) => {
   const userToken = req.headers.authorization.split('Bearer ')[1];
   console.log("Este beria ser el token" + userToken);
@@ -197,4 +260,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { signIn, signUp, logout,  getAllUsers, requestPasswordReset, resetPassword };
+module.exports = { signIn, signUp, logout,  getAllUsers, suspendUser, changeRole, requestPasswordReset, resetPassword };

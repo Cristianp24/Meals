@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { signIn, signUp, logout, getAllUsers, requestPasswordReset, resetPassword } = require('./usersController');
+const { signIn, signUp, logout, getAllUsers, suspendUser, changeRole, requestPasswordReset, resetPassword } = require('./usersController');
 const passport = require('passport');
 require('../Other/passportConfig');
 const jwt = require('jsonwebtoken');
@@ -14,6 +14,8 @@ router.get("/", getAllUsers);
 router.post("/signin", signIn);
 router.post("/signup", signUp);
 router.post("/logout", logout);
+router.put("/:id/suspend", suspendUser);
+router.put('/change-role', changeRole);
 
 
 
