@@ -1,10 +1,8 @@
 const { Router } = require("express");
-const { signIn, signUp, logout, getAllUsers, suspendUser, changeRole, requestPasswordReset, resetPassword } = require('./usersController');
+const { signIn, signUp, logout, getAllUsers, suspendUser, changeRole, updateUserStatus, requestPasswordReset, resetPassword } = require('./usersController');
 const passport = require('passport');
 require('../Other/passportConfig');
 const jwt = require('jsonwebtoken');
-
-const { User } = require('../Other/dbConfig');
 
 
 const router = Router();
@@ -19,28 +17,7 @@ router.post("/logout", logout);
 router.put("/:id/suspend", suspendUser);
 router.put('/change-role', changeRole);
 
-router.put('/status', async (req, res) => {
-  const { userId, status } = req.body;
-
-  try {
-    // Verifica si el usuario existe
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-
-    // Actualiza el estado del usuario
-    user.status = status;
-    await user.save();
-
-    res.status(200).send({ message: 'User status updated successfully', user });
-  } catch (error) {
-    console.error('Error updating user status:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-
+router.put('/status',updateUserStatus );
 
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
@@ -50,8 +27,9 @@ router.get('/auth/google', passport.authenticate('google', {
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
       const userId = req.user.id || req.user.sub; // Usar id o sub
+      const userRole = req.user.role;
       const token = jwt.sign(
-        { id: userId, email: req.user.email },
+        { id: userId, email: req.user.email, role: userRole },
         'secret', 
         { expiresIn: '1h' } 
       );

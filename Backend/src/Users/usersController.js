@@ -31,6 +31,7 @@ async function signUp(req, res) {
       name,
       email,
       password: hashedPassword, // Guardar la contraseña hasheada
+      role: 'user',
     });
 
     res.status(201).json({ message: 'User registered successfully!', user: newUser });
@@ -63,7 +64,7 @@ async function signUp(req, res) {
 
       // Generar el token JWT
       const token = jwt.sign(
-        { id: user.id, email: user.email },
+        { id: user.id, email: user.email, role: user.role },
         'secret', // Cambia esto por una clave secreta segura
         { expiresIn: '1h' } // Duración del token (puedes cambiar el valor)
       );
@@ -150,6 +151,27 @@ const changeRole = async (req, res) => {
   }
 };
 
+
+const updateUserStatus = async (req, res) => {
+  const { userId, status } = req.body;
+
+  try {
+    // Verifica si el usuario existe
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Actualiza el estado del usuario
+    user.status = status;
+    await user.save();
+
+    res.status(200).send({ message: 'User status updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
 
@@ -263,4 +285,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { signIn, signUp, logout,  getAllUsers, suspendUser, changeRole, requestPasswordReset, resetPassword };
+module.exports = { signIn, signUp, logout,  getAllUsers, suspendUser, changeRole, updateUserStatus, requestPasswordReset, resetPassword };
