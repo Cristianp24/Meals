@@ -16,7 +16,6 @@ router.post("/signup", signUp);
 router.post("/logout", logout);
 router.put("/:id/suspend", suspendUser);
 router.put('/change-role', changeRole);
-
 router.put('/status',updateUserStatus );
 
 router.get('/auth/google', passport.authenticate('google', {
