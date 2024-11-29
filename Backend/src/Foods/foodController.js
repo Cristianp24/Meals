@@ -1,4 +1,5 @@
 const { Food } = require('../Other/dbConfig');
+const { Op } = require('sequelize');
 
 const createFood = async (req, res) => {
     try {
@@ -50,9 +51,38 @@ const createFood = async (req, res) => {
       res.status(500).json({ message: 'Error deleting food', error: error.message });
   }
   }
+
+  const searchFoodByName = async (req, res) => {
+    const { name } = req.query;
+  
+    if (!name) {
+      return res.status(400).json({ error: 'El parámetro "name" es requerido' });
+    }
+  
+    try {
+      // Realiza una búsqueda insensible a mayúsculas y minúsculas y parcial
+      const foods = await Food.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `%${name}%` // PostgreSQL permite búsquedas insensibles a mayúsculas con iLike
+          }
+        }
+      });
+  
+      if (foods.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron alimentos con ese nombre' });
+      }
+  
+      res.json(foods);
+    } catch (error) {
+      console.error('Error al buscar alimentos:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  };
   
   module.exports = {
     createFood,
     getAllFoods,
-    deleteFood
+    deleteFood,
+    searchFoodByName
   };
