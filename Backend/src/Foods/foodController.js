@@ -79,10 +79,41 @@ const createFood = async (req, res) => {
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   };
+
+  const updateFood = async (req, res) => {
+    const { id } = req.params;
+    const { name, imageUrl, protein, carbohydrates, fat, fiber, calories } = req.body;
+  
+    try {
+      // Buscar el alimento por ID
+      const food = await Food.findByPk(id);
+      if (!food) {
+        return res.status(404).json({ message: 'Food not found' });
+      }
+  
+      // Actualizar los datos del alimento
+      food.name = name || food.name;
+      food.imageUrl = imageUrl || food.imageUrl;
+      food.protein = protein || food.protein;
+      food.carbohydrates = carbohydrates || food.carbohydrates;
+      food.fat = fat || food.fat;
+      food.fiber = fiber || food.fiber;
+      food.calories = calories || food.calories;
+      food.imageUrl = imageUrl || food.imageUrl;
+  
+      // Guardar los cambios
+      await food.save();
+      return res.status(200).json(food);
+    } catch (error) {
+      console.error('Error updating food:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  };
   
   module.exports = {
     createFood,
     getAllFoods,
     deleteFood,
-    searchFoodByName
+    searchFoodByName,
+    updateFood
   };
